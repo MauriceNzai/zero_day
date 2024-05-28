@@ -1,188 +1,224 @@
-# E-Commerce API
+# Harvest-Hub API
 
-This is an E-commerce API that allows users to register, login, manage products, create orders, and handle payments. The API supports three types of users: admin, buyer, and seller. The implementation is done using Node.js, Express, and MongoDB.
+Harvest-Hub is an API for user registration, verification, authentication, and management. This project uses Node.js, Express.js, MongoDB, JWT, and Nodemailer.
 
 ## Table of Contents
 
+- [Features](#features)
+- [Technology Stack](#technology-stack)
 - [Installation](#installation)
-- [Setup](#setup)
-- [Usage](#usage)
+- [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
-- [Testing](#testing)
-- [Swagger Documentation](#swagger-documentation)
+- [Usage](#usage)
+- [License](#license)
+
+## Features
+
+- User Registration
+- User Email Verification
+- User Authentication (Login)
+- User Logout
+- Password Reset
+
+## Technology Stack
+
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB (Mongoose)
+- **Authentication:** JWT (JSON Web Tokens), Bcrypt for password hashing
+- **Email Service:** Nodemailer with Gmail SMTP
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/ecommerce-api.git
-Navigate to the project directory:
-bash
-Copy code
-cd ecommerce-api
-Install dependencies:
-bash
-Copy code
-npm install
-Setup
-Create a .env file in the root directory and add the following environment variables:
+1. **Clone the repository:**
 
-env
-Copy code
-PORT=5000
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-Start the server:
+    ```bash
+    git clone https://github.com/your-username/harvest-hub.git
+    cd harvest-hub
+    ```
 
-bash
-Copy code
-npm start
-Usage
-Register a New User
-To register a new user, send a POST request to /auth/register with the following JSON payload:
+2. **Install dependencies:**
 
-json
-Copy code
-{
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "password": "yourpassword"
-}
-Login a User
-To login, send a POST request to /auth/login with the following JSON payload:
+    ```bash
+    npm install
+    ```
 
-json
-Copy code
-{
-  "email": "john.doe@example.com",
-  "password": "yourpassword"
-}
-Create a Product
-To create a product (sellers only), send a POST request to /products with the following JSON payload and an authorization token:
+3. **Set up environment variables:**
 
-json
-Copy code
-{
-  "name": "Product Name",
-  "price": 100,
-  "description": "Product Description"
-}
-API Endpoints
-Auth Routes
-POST /auth/register - Register a new user
-GET /auth/verify/:token - Verify a user's email
-POST /auth/login - Login a user
-POST /auth/request-reset - Request password reset
-POST /auth/reset/:token - Reset password
-PUT /auth/change-password - Change password (authenticated)
-User Routes
-GET /users - Get all users (admin only)
-GET /users/:id - Get user by ID (admin only)
-PUT /users/:id - Update user by ID (admin only)
-DELETE /users/:id - Delete user by ID (admin only)
-Product Routes
-GET /products/seller - Get products of a seller (admin and seller)
-DELETE /products/:id - Delete product by ID (admin and seller)
-POST /products - Create a new product (seller only)
-PUT /products/:id - Update product by ID (seller only)
-GET /products - Get all products (admin, buyer, and seller)
-GET /products/:id - Get product by ID (admin, buyer, and seller)
-Testing
-Using Postman
-Create a New Collection:
+    Create a `.env` file in the root directory and add the following variables:
 
-Open Postman and click on the Collections tab.
-Click New Collection and name it E-commerce API.
-Add Requests:
+    ```plaintext
+    PORT=5000
+    MONGODB_URI=your_mongodb_connection_string
+    JWT_SECRET=your_jwt_secret
+    EMAIL_USERNAME=your_gmail_username
+    EMAIL_PASSWORD=your_gmail_password
+    ```
 
-For each endpoint, create a new request.
-Set the request type (GET, POST, PUT, DELETE) and the URL.
-For POST and PUT requests, set the body to raw JSON and include the necessary payload.
-For authenticated routes, add the Authorization header with the Bearer token.
-Example Requests
-Register User:
+4. **Run the application:**
 
-Method: POST
-URL: http://localhost:5000/auth/register
-Body:
-json
-Copy code
-{
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "password": "yourpassword"
-}
-Login User:
+    ```bash
+    npm start
+    ```
 
-Method: POST
-URL: http://localhost:5000/auth/login
-Body:
-json
-Copy code
-{
-  "email": "john.doe@example.com",
-  "password": "yourpassword"
-}
-Swagger Documentation
-The API uses Swagger for documentation. You can view the API documentation by navigating to http://localhost:5000/api-docs.
+## Environment Variables
 
-Setting Up Swagger
-Install Swagger UI Express and Swagger JSDoc:
+- `PORT`: Port number on which the server runs.
+- `MONGODB_URI`: MongoDB connection string.
+- `JWT_SECRET`: Secret key for signing JWT tokens.
+- `EMAIL_USERNAME`: Gmail username for sending emails.
+- `EMAIL_PASSWORD`: Gmail password for sending emails.
 
-bash
-Copy code
-npm install swagger-ui-express swagger-jsdoc
-Set up Swagger in your Express app:
+## API Endpoints
 
-javascript
-Copy code
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+### User Registration
 
-const options = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'E-commerce API',
-            version: '1.0.0',
-            description: 'API documentation for the E-commerce platform',
-        },
-        servers: [
-            {
-                url: 'http://localhost:5000',
-            },
-        ],
-        components: {
-            securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT',
-                },
-            },
-        },
-    },
-    apis: ['./routes/*.js'],
-};
+- **Endpoint:** `POST /api/users/register`
+- **Description:** Registers a new user.
+- **Request Body:**
 
-const specs = swaggerJsdoc(options);
+    ```json
+    {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "password": "password123",
+        "role": "user"
+    }
+    ```
 
-module.exports = (app) => {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-};
-Integrate Swagger setup into your Express app in app.js or server.js:
+- **Response:**
 
-javascript
-Copy code
-const express = require('express');
-const swaggerSetup = require('./swagger');
+    ```json
+    {
+        "message": "Verification email sent"
+    }
+    ```
 
-const app = express();
+### User Verification
 
-// Other middleware and route setups
+- **Endpoint:** `GET /api/users/verify/:token`
+- **Description:** Verifies a user's email address.
+- **Response:**
 
-swaggerSetup(app);
+    ```json
+    {
+        "message": "Account verified"
+    }
+    ```
 
-app.listen(5000, () => {
-    console.log('Server is running on http://localhost:5000');
-});
+### User Login
+
+- **Endpoint:** `POST /api/users/login`
+- **Description:** Authenticates a user and returns a JWT token.
+- **Request Body:**
+
+    ```json
+    {
+        "email": "john.doe@example.com",
+        "password": "password123"
+    }
+    ```
+
+- **Response:**
+
+    ```json
+    {
+        "token": "your_jwt_token"
+    }
+    ```
+
+### User Logout
+
+- **Endpoint:** `POST /api/users/logout`
+- **Description:** Logs out a user (optional server-side tasks).
+- **Headers:**
+
+    ```plaintext
+    Authorization: Bearer your_jwt_token
+    ```
+
+- **Response:**
+
+    ```json
+    {
+        "message": "Logged out successfully"
+    }
+    ```
+
+### Password Reset
+
+- **Request Password Reset:**
+
+    - **Endpoint:** `POST /api/users/reset-password-request`
+    - **Description:** Sends a password reset email.
+    - **Request Body:**
+
+        ```json
+        {
+            "email": "john.doe@example.com"
+        }
+        ```
+
+    - **Response:**
+
+        ```json
+        {
+            "message": "Password reset email sent"
+        }
+        ```
+
+- **Reset Password:**
+
+    - **Endpoint:** `POST /api/users/reset-password/:token`
+    - **Description:** Resets the user's password.
+    - **Request Body:**
+
+        ```json
+        {
+            "password": "newpassword123"
+        }
+        ```
+
+    - **Response:**
+
+        ```json
+        {
+            "message": "Password has been reset"
+        }
+        ```
+
+## Usage
+
+1. **Register a new user:**
+
+    ```bash
+    curl -X POST http://localhost:5000/api/users/register -H "Content-Type: application/json" -d '{
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "password": "password123",
+        "role": "user"
+    }'
+    ```
+
+2. **Verify the user's email address:**
+
+    Follow the link sent to the user's email to verify their account.
+
+3. **Log in the user:**
+
+    ```bash
+    curl -X POST http://localhost:5000/api/users/login -H "Content-Type: application/json" -d '{
+        "email": "john.doe@example.com",
+        "password": "password123"
+    }'
+    ```
+
+4. **Log out the user:**
+
+    ```bash
+    curl -X POST http://localhost:5000/api/users/logout -H "Authorization: Bearer your_jwt_token"
+    ```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
